@@ -47,65 +47,73 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto px-4 text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="mb-8"
-          >
-            <Badge className="mb-6 text-lg px-6 py-2 bg-primary/20 text-primary border-primary/30">
-              First-of-its-kind in Nashik
-            </Badge>
+  <motion.div
+    initial={{ opacity: 0, scale: 0.9 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.8 }}
+    className="mb-10"
+  >
+    {/* Transparent Badge */}
+    <Badge className="mt-6 mb-8 text-sm sm:text-base md:text-lg px-4 py-1.5 sm:px-6 sm:py-2 bg-transparent text-primary border border-primary/30 rounded-full tracking-wide">
+  First-of-its-kind in Nashik
+</Badge>
 
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 text-balance">
-              <span className="bg-gradient-to-r from-primary via-accent to-cyan-400 bg-clip-text text-transparent">
-                PICKLE X COFFEE RAVE X LAUNCH BB EXPRESS
-              </span>
-              <br />
-              <span className="text-foreground">Fitness & Lifestyle</span>
-              <br />
-              <span className="text-foreground">Carnival</span>
-            </h1>
 
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto text-pretty">
-              Fitness • Lifestyle • Food • Community
-            </p>
-          </motion.div>
+    {/* Title */}
+    <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+      <span className="bg-gradient-to-r from-primary via-accent to-cyan-400 bg-clip-text text-transparent block">
+        PICKLE X COFFEE
+      </span>
+      <span className="bg-gradient-to-r from-primary via-accent to-cyan-400 bg-clip-text text-transparent block">
+        RAVE X LAUNCH BB EXPRESS
+      </span>
+      <span className="block mt-4 text-foreground">Fitness & Lifestyle</span>
+      <span className="block text-foreground">Carnival</span>
+    </h1>
 
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col md:flex-row items-center justify-center gap-6 mb-12"
-          >
-            <div className="flex items-center gap-2 text-lg">
-              <MapPin className="w-5 h-5 text-primary" />
-              <span>Nashik, Maharashtra</span>
-            </div>
-            <div className="flex items-center gap-2 text-lg">
-              <Calendar className="w-5 h-5 text-accent" />
-              <span>Oct 5, 2025</span>
-            </div>
-            <div className="flex items-center gap-2 text-lg">
-              <Clock className="w-5 h-5 text-cyan-400" />
-              <span>3:00 PM - 9:00 PM</span>
-            </div>
-          </motion.div>
+    {/* Subtitle */}
+    <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
+      Fitness • Lifestyle • Food • Community
+    </p>
+  </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-          >
-            <Button
-              size="lg"
-              className="text-lg px-8 py-6 neon-glow hover:scale-105 transition-all duration-300"
-              onClick={scrollToRegistration}
-            >
-              Register Now <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-          </motion.div>
-        </div>
+  {/* Event Details */}
+  <motion.div
+    initial={{ opacity: 0, y: 40 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, delay: 0.3 }}
+    className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-12 text-base sm:text-lg"
+  >
+    <div className="flex items-center gap-2">
+      <MapPin className="w-5 h-5 text-primary" />
+      <span>Nashik, Maharashtra</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <Calendar className="w-5 h-5 text-accent" />
+      <span>Oct 5, 2025</span>
+    </div>
+    <div className="flex items-center gap-2">
+      <Clock className="w-5 h-5 text-cyan-400" />
+      <span>3:00 PM - 9:00 PM</span>
+    </div>
+  </motion.div>
+
+  {/* CTA Button */}
+  <motion.div
+    initial={{ opacity: 0, y: 40 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, delay: 0.5 }}
+  >
+    <Button
+      size="lg"
+      className="text-lg px-8 py-6 neon-glow hover:scale-105 transition-all duration-300"
+      onClick={scrollToRegistration}
+    >
+      Register Now <ArrowRight className="ml-2 w-5 h-5" />
+    </Button>
+  </motion.div>
+</div>
+
       </section>
 
       {/* About Section */}
