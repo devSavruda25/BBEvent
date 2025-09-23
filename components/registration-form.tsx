@@ -23,7 +23,6 @@ export function RegistrationForm() {
     { name: "", email: "", phone: "", interests: "" },
   ])
 
-  // Whenever dropdown changes, adjust the array length
   useEffect(() => {
     const count = numAttendees === "5+" ? 5 : parseInt(numAttendees)
     setAttendees((prev) => {
@@ -48,12 +47,9 @@ export function RegistrationForm() {
     setIsSubmitting(true)
 
     try {
-      // Convert interests into arrays
       const attendeesWithInterests = attendees.map((a) => ({
         ...a,
-        interests: a.interests
-          ? a.interests.split(",").map((i) => i.trim())
-          : [],
+        interests: a.interests ? a.interests.split(",").map((i) => i.trim()) : [],
         source: "Website Form",
       }))
 
@@ -61,6 +57,8 @@ export function RegistrationForm() {
         organization: organization || undefined,
         attendees: attendeesWithInterests,
       }
+
+      console.log("Submitting payload:", payload)
 
       const res = await fetch("https://bbe-cpv1.onrender.com/api/register", {
         method: "POST",
@@ -85,7 +83,7 @@ export function RegistrationForm() {
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6 }}
-        className="max-w-md mx-auto"
+        className="max-w-md mx-auto pointer-events-auto"
       >
         <Card className="bg-card/80 border-primary/30 text-center">
           <CardContent className="p-8">
@@ -107,84 +105,92 @@ export function RegistrationForm() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8 }}
-      className="max-w-3xl mx-auto"
+      className="max-w-3xl mx-auto pointer-events-auto"
     >
-      <Card className="bg-card/80 border-border/50">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Register for the Carnival</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="organization">Community/Organization (Optional)</Label>
-              <Input
-                id="organization"
-                value={organization}
-                onChange={(e) => setOrganization(e.target.value)}
-                placeholder="e.g., Local Gym, Fitness Club, etc."
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="attendees">Number of Attendees</Label>
-              <Select value={numAttendees} onValueChange={setNumAttendees}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">1 Person</SelectItem>
-                  <SelectItem value="2">2 People</SelectItem>
-                  <SelectItem value="3">3 People</SelectItem>
-                  <SelectItem value="4">4 People</SelectItem>
-                  <SelectItem value="5+">5+ People</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {attendees.map((a, i) => (
-              <div key={i} className="p-4 border rounded-md space-y-4">
-                <h4 className="font-semibold">Attendee {i + 1}</h4>
+      <div className="overflow-auto p-4">
+        <Card className="bg-card/80 border-border/50">
+          <CardHeader>
+            <CardTitle className="text-2xl text-center">Register for the Carnival</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="organization">Community/Organization (Optional)</Label>
                 <Input
-                  placeholder="Full Name *"
-                  value={a.name}
-                  onChange={(e) => handleAttendeeChange(i, "name", e.target.value)}
-                  required
-                />
-                <Input
-                  placeholder="Email Address *"
-                  type="email"
-                  value={a.email}
-                  onChange={(e) => handleAttendeeChange(i, "email", e.target.value)}
-                  required
-                />
-                <Input
-                  placeholder="Phone Number *"
-                  type="tel"
-                  value={a.phone}
-                  onChange={(e) => handleAttendeeChange(i, "phone", e.target.value)}
-                  required
-                />
-                <Textarea
-                  placeholder="Interests (comma-separated, optional)"
-                  value={a.interests}
-                  onChange={(e) => handleAttendeeChange(i, "interests", e.target.value)}
+                  id="organization"
+                  value={organization}
+                  onChange={(e) => setOrganization(e.target.value)}
+                  placeholder="e.g., Local Gym, Fitness Club, etc."
                 />
               </div>
-            ))}
 
-            <Button type="submit" size="lg" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Registering...
-                </>
-              ) : (
-                "Complete Registration"
-              )}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+              <div className="space-y-2">
+                <Label htmlFor="attendees">Number of Attendees</Label>
+                <Select
+                  value={numAttendees}
+                  onValueChange={(v) => {
+                    console.log("Select changed:", v)
+                    setNumAttendees(v)
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 Person</SelectItem>
+                    <SelectItem value="2">2 People</SelectItem>
+                    <SelectItem value="3">3 People</SelectItem>
+                    <SelectItem value="4">4 People</SelectItem>
+                    <SelectItem value="5+">5+ People</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {attendees.map((a, i) => (
+                <div key={i} className="p-4 border rounded-md space-y-4">
+                  <h4 className="font-semibold">Attendee {i + 1}</h4>
+                  <Input
+                    placeholder="Full Name *"
+                    value={a.name}
+                    onChange={(e) => handleAttendeeChange(i, "name", e.target.value)}
+                    required
+                  />
+                  <Input
+                    placeholder="Email Address *"
+                    type="email"
+                    value={a.email}
+                    onChange={(e) => handleAttendeeChange(i, "email", e.target.value)}
+                    required
+                  />
+                  <Input
+                    placeholder="Phone Number *"
+                    type="tel"
+                    value={a.phone}
+                    onChange={(e) => handleAttendeeChange(i, "phone", e.target.value)}
+                    required
+                  />
+                  <Textarea
+                    placeholder="Interests (comma-separated, optional)"
+                    value={a.interests}
+                    onChange={(e) => handleAttendeeChange(i, "interests", e.target.value)}
+                  />
+                </div>
+              ))}
+
+              <Button type="submit" size="lg" disabled={isSubmitting} className="w-full">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Registering...
+                  </>
+                ) : (
+                  "Complete Registration"
+                )}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </motion.div>
   )
 }
