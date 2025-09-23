@@ -9,7 +9,8 @@ import { RegistrationForm } from "@/components/registration-form"
 import { EventHighlights } from "@/components/event-highlights"
 import { EventSchedule } from "@/components/event-schedule"
 import { PartnersSection } from "@/components/partners-section"
-
+import { Instagram, Facebook, Twitter } from "lucide-react"
+import Image from "next/image"
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
   animate: { opacity: 1, y: 0 },
@@ -85,16 +86,16 @@ export default function Home() {
     className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-12 text-base sm:text-lg"
   >
     <div className="flex items-center gap-2">
-      <MapPin className="w-5 h-5 text-primary" />
+      <MapPin className="w-5 h-5 text-blue-500" />
       <span>Nashik, Maharashtra</span>
     </div>
     <div className="flex items-center gap-2">
-      <Calendar className="w-5 h-5 text-accent" />
+      <Calendar className="w-5 h-5 text-orange-400" />
       <span>Oct 5, 2025</span>
     </div>
     <div className="flex items-center gap-2">
       <Clock className="w-5 h-5 text-cyan-400" />
-      <span>3:00 PM - 9:00 PM</span>
+      <span>3:00 PM Onwards</span>
     </div>
   </motion.div>
 
@@ -223,62 +224,68 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="bg-card/80 py-12 px-4 border-t border-border">
-        <div className="container mx-auto">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <h3 className="text-2xl font-bold text-primary mb-4">Brotein Bistro</h3>
-              <p className="text-muted-foreground mb-4">
-                Nashik's premier fitness and lifestyle destination, bringing community together through wellness and
-                great food.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
-              <div className="space-y-2 text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  <span>+91 98765 43210</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  <span>info@broteinbistro.com</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Globe className="w-4 h-4" />
-                  <span>broteinbistro.com</span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
-              <div className="flex gap-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="hover:bg-primary hover:text-primary-foreground bg-transparent"
-                >
-                  Instagram
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="hover:bg-accent hover:text-accent-foreground bg-transparent"
-                >
-                  Facebook
-                </Button>
-                <Button variant="outline" size="sm" className="hover:bg-cyan-400 hover:text-black bg-transparent">
-                  Twitter
-                </Button>
-              </div>
-            </div>
+  <div className="container mx-auto">
+    <div className="grid md:grid-cols-3 gap-8 mb-8 items-center">
+      
+      {/* Logo & Description */}
+      <div className="flex flex-col items-center md:items-start">
+        <Image
+          src="https://res.cloudinary.com/dttagqqne/image/upload/v1752063312/Brotein_Bistro_fcueln.png" // Replace with your logo path
+          alt="Brotein Bistro Logo"
+          width={150}
+          height={50}
+          className="mb-4"
+        />
+        <p className="text-muted-foreground text-center md:text-left">
+          Nashik's premier fitness and lifestyle destination, bringing community together through wellness and great food.
+        </p>
+      </div>
+
+      {/* Contact Info */}
+      <div className="text-center md:text-left">
+        <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
+        <div className="space-y-2 text-muted-foreground">
+          <div className="flex items-center gap-2 justify-center md:justify-start">
+            <Phone className="w-4 h-4" />
+            <span>+91 98765 43210</span>
           </div>
-          <div className="text-center pt-8 border-t border-border">
-            <p className="text-muted-foreground">
-              © 2025 Brotein Bistro. All rights reserved. | Fitness • Lifestyle • Community
-            </p>
+          <div className="flex items-center gap-2 justify-center md:justify-start">
+            <Mail className="w-4 h-4" />
+            <span>info@broteinbistro.com</span>
+          </div>
+          <div className="flex items-center gap-2 justify-center md:justify-start">
+            <Globe className="w-4 h-4" />
+            <span>broteinbistro.com</span>
           </div>
         </div>
-      </footer>
+      </div>
+
+      {/* Social Media Icons */}
+      <div className="flex flex-col items-center md:items-start">
+        <h4 className="text-lg font-semibold mb-4">Follow Us</h4>
+        <div className="flex gap-4">
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+            <Instagram className="w-6 h-6 text-pink-500 hover:text-pink-400 transition-colors" />
+          </a>
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+            <Facebook className="w-6 h-6 text-blue-600 hover:text-blue-500 transition-colors" />
+          </a>
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+            <Twitter className="w-6 h-6 text-cyan-400 hover:text-cyan-300 transition-colors" />
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    {/* Footer Bottom Text */}
+    <div className="text-center pt-8 border-t border-border">
+      <p className="text-muted-foreground">
+        © 2025 Brotein Bistro. All rights reserved. | Fitness • Lifestyle • Community
+      </p>
+    </div>
+  </div>
+</footer>
     </div>
   )
 }
