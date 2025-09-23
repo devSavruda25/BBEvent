@@ -279,14 +279,17 @@ export default function VerifyQRPage() {
     }
   };
 
-  const scannerConstraints: MediaTrackConstraints = 
-  selectedCamera === "environment"
-    ? { facingMode: { ideal: "environment" } }
-    : selectedCamera === "user"
-    ? { facingMode: { ideal: "user" } }
-    : selectedCamera
-    ? { deviceId: selectedCamera } // ✅ no "exact"
-    : {};
+  const scannerConstraints: MediaStreamConstraints = {
+  video:
+    selectedCamera === "environment"
+      ? { facingMode: { ideal: "environment" } }
+      : selectedCamera === "user"
+      ? { facingMode: { ideal: "user" } }
+      : selectedCamera
+      ? { deviceId: { exact: selectedCamera } }
+      : true, // ✅ fallback ensures video is always requested
+};
+
 
 
   return (
