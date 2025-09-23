@@ -60,7 +60,7 @@ const getTypeColor = (type: string) => {
   const colors = {
     arrival: "bg-blue-500/20 text-blue-400 border-blue-500/30",
     fitness: "bg-primary/20 text-primary border-primary/30",
-    dance: "bg-accent/20 text-accent border-accent/30",
+    dance: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
     sports: "bg-orange-500/20 text-orange-400 border-orange-500/30",
     food: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
     showcase: "bg-purple-500/20 text-purple-400 border-purple-500/30",
@@ -82,7 +82,7 @@ export function EventSchedule() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Event <span className="text-accent">Schedule</span>
+            Event <span className="text-primary">Schedule</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto text-pretty">
             A carefully curated timeline of activities designed to maximize your carnival experience

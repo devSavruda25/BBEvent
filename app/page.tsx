@@ -162,7 +162,7 @@ export default function Home() {
             className="text-center"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-8">
-              Why This Event <span className="text-accent">Matters</span>
+              Why This Event <span className="text-primary">Matters</span>
             </h2>
             <div className="max-w-4xl mx-auto">
               <p className="text-xl text-muted-foreground mb-8 text-pretty leading-relaxed">
@@ -173,7 +173,7 @@ export default function Home() {
               <div className="grid md:grid-cols-3 gap-8 mt-12">
                 <Card className="bg-card/80 border-primary/20 hover:border-primary/40 transition-colors">
                   <CardContent className="p-6 text-center">
-                    <Heart className="w-12 h-12 text-primary mx-auto mb-4" />
+                    <Heart className="w-12 h-12 text-red-500 mx-auto mb-4" />
                     <h3 className="text-xl font-semibold mb-2">Community Building</h3>
                     <p className="text-muted-foreground">
                       Bringing together fitness enthusiasts and lifestyle advocates
@@ -182,7 +182,7 @@ export default function Home() {
                 </Card>
                 <Card className="bg-card/80 border-accent/20 hover:border-accent/40 transition-colors">
                   <CardContent className="p-6 text-center">
-                    <Star className="w-12 h-12 text-accent mx-auto mb-4" />
+                    <Star className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
                     <h3 className="text-xl font-semibold mb-2">Innovation</h3>
                     <p className="text-muted-foreground">Setting new standards for wellness events in Maharashtra</p>
                   </CardContent>

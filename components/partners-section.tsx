@@ -61,7 +61,21 @@ export function PartnersSection() {
             >
               <Card className="h-full bg-card/80 border-border/50 hover:border-accent/30 transition-colors">
                 <CardContent className="p-6">
-                  <Badge className="mb-4 bg-accent/20 text-accent border-accent/30">{partner.category}</Badge>
+                  <Badge
+  className="mb-4 bg-transparent text-black border border-black rounded-full px-4 py-2 tracking-wider"
+  style={{
+    textShadow: `
+      0 0 5px #ff00ff,
+      0 0 10px #00ffff,
+      0 0 20px #ffff00,
+      0 0 30px #ff00ff,
+      0 0 40px #00ffff
+    `,
+  }}
+>
+  {partner.category}
+</Badge>
+
                   <ul className="space-y-2">
                     {partner.items.map((item, itemIndex) => (
                       <li key={itemIndex} className="text-muted-foreground flex items-center gap-2">
