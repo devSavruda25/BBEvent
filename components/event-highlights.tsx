@@ -15,7 +15,7 @@ const highlights = [
     icon: Music,
     title: "Zumba & Dance Energy Hours",
     description: "High-energy dance sessions led by certified instructors",
-    color: "text-accent",
+    color: "text-pink-400",
   },
   {
     icon: Target,

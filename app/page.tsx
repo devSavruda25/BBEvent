@@ -59,7 +59,7 @@ export default function Home() {
 
             <h1 className="text-5xl md:text-7xl font-bold mb-6 text-balance">
               <span className="bg-gradient-to-r from-primary via-accent to-cyan-400 bg-clip-text text-transparent">
-                Brotein Bistro
+                PICKLE X COFFEE  RAVE X LAUNCH BB EXPRESS
               </span>
               <br />
               <span className="text-foreground">Fitness & Lifestyle</span>
@@ -84,7 +84,7 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-2 text-lg">
               <Calendar className="w-5 h-5 text-accent" />
-              <span>March 15, 2025</span>
+              <span>Oct 5, 2025</span>
             </div>
             <div className="flex items-center gap-2 text-lg">
               <Clock className="w-5 h-5 text-cyan-400" />
