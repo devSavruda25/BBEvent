@@ -279,12 +279,15 @@ export default function VerifyQRPage() {
     }
   };
 
-  const scannerConstraints = {
-    facingMode: selectedCamera === "environment" ? "environment" : 
-                selectedCamera === "user" ? "user" : undefined,
-    deviceId: selectedCamera !== "environment" && selectedCamera !== "user" ? 
-              { exact: selectedCamera } : undefined
-  };
+  const scannerConstraints: MediaTrackConstraints = 
+  selectedCamera === "environment"
+    ? { facingMode: { ideal: "environment" } }
+    : selectedCamera === "user"
+    ? { facingMode: { ideal: "user" } }
+    : selectedCamera
+    ? { deviceId: selectedCamera } // ✅ no "exact"
+    : {};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
