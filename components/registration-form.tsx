@@ -62,7 +62,7 @@ export function RegistrationForm() {
         attendees: attendeesWithInterests,
       }
 
-      const res = await fetch("http://localhost:5000/api/register", {
+      const res = await fetch("https://bbe-cpv1.onrender.com/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
