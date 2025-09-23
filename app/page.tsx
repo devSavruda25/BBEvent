@@ -59,7 +59,7 @@ export default function Home() {
 
             <h1 className="text-5xl md:text-7xl font-bold mb-6 text-balance">
               <span className="bg-gradient-to-r from-primary via-accent to-cyan-400 bg-clip-text text-transparent">
-                PICKLE X COFFEE  RAVE X LAUNCH BB EXPRESS
+                PICKLE X COFFEE RAVE X LAUNCH BB EXPRESS
               </span>
               <br />
               <span className="text-foreground">Fitness & Lifestyle</span>
