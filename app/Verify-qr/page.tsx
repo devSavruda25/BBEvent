@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import axios from "axios";
 
-// Dynamically import QR scanner
-const QrScanner = dynamic<typeof import("react-qr-scanner").default>(
-  () => import("react-qr-scanner"),
-  { ssr: false }
+// Dynamically import QR scanner with better error handling
+const QrScanner = dynamic(
+  () => import("react-qr-scanner").then((mod) => mod.default),
+  { 
+    ssr: false,
+    loading: () => <CameraPlaceholder />
+  }
 );
 
 interface VerifyResponse {
@@ -21,9 +24,73 @@ interface ScanResult {
   text?: string;
 }
 
-type Status = "idle" | "scanning" | "verifying" | "success" | "error";
+type Status = "idle" | "scanning" | "verifying" | "success" | "error" | "camera_error";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+// Camera placeholder component
+function CameraPlaceholder() {
+  return (
+    <div className="w-full aspect-square bg-gray-200 rounded-xl flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+        <p className="text-gray-600">Loading camera...</p>
+      </div>
+    </div>
+  );
+}
+
+// Camera selector component
+function CameraSelector({ onCameraChange }: { onCameraChange: (deviceId: string) => void }) {
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+  const [selectedCamera, setSelectedCamera] = useState<string>("environment");
+
+  useEffect(() => {
+    const getCameras = async () => {
+      try {
+        await navigator.mediaDevices.getUserMedia({ video: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        setDevices(videoDevices);
+      } catch (err) {
+        console.log('Error getting cameras:', err);
+      }
+    };
+
+    getCameras();
+  }, []);
+
+  const handleCameraChange = (deviceId: string) => {
+    setSelectedCamera(deviceId);
+    onCameraChange(deviceId);
+  };
+
+  if (devices.length === 0) return null;
+
+  return (
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700 mb-2">Select Camera:</label>
+      <select 
+        value={selectedCamera}
+        onChange={(e) => handleCameraChange(e.target.value)}
+        className="w-full p-2 border border-gray-300 rounded-lg"
+      >
+        <option value="environment">Back Camera (Auto)</option>
+        <option value="user">Front Camera</option>
+        {devices.map((device) => (
+          <option key={device.deviceId} value={device.deviceId}>
+            {device.label || `Camera ${device.deviceId.slice(0, 5)}`}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
 
 export default function VerifyQRPage() {
   const [qrData, setQrData] = useState<string>("");
@@ -43,8 +110,44 @@ export default function VerifyQRPage() {
     timestamp: Date;
     attendeeName?: string;
   }>>([]);
+  const [cameraError, setCameraError] = useState<string>("");
+  const [selectedCamera, setSelectedCamera] = useState<string>("environment");
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean>(true);
 
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const scannerRef = useRef<any>(null);
+
+  // Check camera permissions on component mount
+  useEffect(() => {
+    checkCameraPermissions();
+  }, []);
+
+  const checkCameraPermissions = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      // Stop all tracks to release camera
+      stream.getTracks().forEach(track => track.stop());
+      setHasCameraPermission(true);
+      setCameraError("");
+    } catch (err: any) {
+      setHasCameraPermission(false);
+      setCameraError(getCameraErrorMessage(err));
+      setStatus("camera_error");
+    }
+  };
+
+  const getCameraErrorMessage = (error: Error) => {
+    if (error.name === 'NotAllowedError') {
+      return 'Camera access denied. Please allow camera permissions in your browser settings.';
+    } else if (error.name === 'NotFoundError') {
+      return 'No camera found on this device.';
+    } else if (error.name === 'NotSupportedError') {
+      return 'Camera not supported in this browser.';
+    } else if (error.name === 'NotReadableError') {
+      return 'Camera is already in use by another application.';
+    } else {
+      return 'Unable to access camera. Please try again.';
+    }
+  };
 
   const handleScan = async (result: ScanResult | string | null) => {
     if (!result || isProcessing) return;
@@ -72,7 +175,6 @@ export default function VerifyQRPage() {
         }
       );
 
-      // Add to scan history
       const scanRecord = {
         code: data.substring(0, 8) + '...',
         valid: res.data.valid,
@@ -80,7 +182,7 @@ export default function VerifyQRPage() {
         attendeeName: res.data.attendeeName
       };
       
-      setScanHistory(prev => [scanRecord, ...prev.slice(0, 4)]); // Keep last 5 scans
+      setScanHistory(prev => [scanRecord, ...prev.slice(0, 4)]);
 
       if (res.data.valid) {
         setStatus("success");
@@ -104,15 +206,7 @@ export default function VerifyQRPage() {
       setAttendeeInfo({});
       
       if (axios.isAxiosError(err)) {
-        if (err.code === 'ECONNABORTED') {
-          setStatusMessage("Request timeout - please try again");
-        } else if (err.response?.status === 404) {
-          setStatusMessage("Ticket not found in system");
-        } else if (err.response?.status === 400) {
-          setStatusMessage("Invalid ticket format");
-        } else {
-          setStatusMessage(err.response?.data?.message || "Server error");
-        }
+        setStatusMessage(err.response?.data?.message || "Server error");
       } else {
         setStatusMessage("Error verifying ticket");
       }
@@ -140,16 +234,28 @@ export default function VerifyQRPage() {
     await handleScan(manualCode.trim());
   };
 
-  const handleError = (err: unknown) => {
-    console.error(err);
-    if (err instanceof Error) {
-      if (err.name === "NotAllowedError") {
-        setStatusMessage("Camera permission denied - please allow camera access");
-      } else if (err.name === "NotFoundError") {
-        setStatusMessage("No camera found on this device");
-      } else {
-        setStatusMessage("Camera error - try refreshing the page");
+  const handleCameraError = (err: any) => {
+    console.error('Camera error:', err);
+    setCameraError(getCameraErrorMessage(err));
+    setStatus("camera_error");
+    setHasCameraPermission(false);
+  };
+
+  const handleCameraChange = (deviceId: string) => {
+    setSelectedCamera(deviceId);
+    setCameraError("");
+    setStatus("idle");
+  };
+
+  const requestCameraAccess = async () => {
+    try {
+      await checkCameraPermissions();
+      if (hasCameraPermission) {
+        setCameraError("");
+        setStatus("idle");
       }
+    } catch (err) {
+      console.error('Error requesting camera access:', err);
     }
   };
 
@@ -160,6 +266,7 @@ export default function VerifyQRPage() {
     setMessageStatus("");
     setAttendeeInfo({});
     setIsProcessing(false);
+    setCameraError("");
   };
 
   const getStatusColor = () => {
@@ -167,8 +274,16 @@ export default function VerifyQRPage() {
       case "success": return "bg-green-50 border-green-200 text-green-800";
       case "error": return "bg-red-50 border-red-200 text-red-800";
       case "verifying": return "bg-blue-50 border-blue-200 text-blue-800";
+      case "camera_error": return "bg-orange-50 border-orange-200 text-orange-800";
       default: return "bg-gray-50 border-gray-200 text-gray-800";
     }
+  };
+
+  const scannerConstraints = {
+    facingMode: selectedCamera === "environment" ? "environment" : 
+                selectedCamera === "user" ? "user" : undefined,
+    deviceId: selectedCamera !== "environment" && selectedCamera !== "user" ? 
+              { exact: selectedCamera } : undefined
   };
 
   return (
@@ -197,44 +312,64 @@ export default function VerifyQRPage() {
               </button>
             </div>
 
+            {/* Camera Selector */}
+            <CameraSelector onCameraChange={handleCameraChange} />
+
             {/* Scanner Container */}
             <div className="relative mb-6">
-              <div className="aspect-square bg-black rounded-xl overflow-hidden relative">
-                <QrScanner
-                  delay={300}
-                  onError={handleError}
-                  onScan={handleScan}
-                  constraints={{ 
-                    facingMode: "environment",
-                    aspectRatio: 1 
-                  }}
-                  style={{ 
-                    width: "100%", 
-                    height: "100%",
-                    objectFit: "cover"
-                  }}
-                />
-                
-                {/* Scanner Overlay */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-64 h-64 border-2 border-white border-dashed rounded-lg relative">
-                    <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-white"></div>
-                    <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-white"></div>
-                    <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-white"></div>
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-white"></div>
+              {cameraError ? (
+                <div className="aspect-square bg-gray-200 rounded-xl flex items-center justify-center">
+                  <div className="text-center p-4">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                      </svg>
+                    </div>
+                    <p className="text-red-600 mb-4">{cameraError}</p>
+                    <button
+                      onClick={requestCameraAccess}
+                      className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    >
+                      Grant Camera Access
+                    </button>
                   </div>
                 </div>
-
-                {/* Processing Overlay */}
-                {isProcessing && (
-                  <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-xl">
-                    <div className="text-white text-center">
-                      <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                      <p className="font-semibold">Processing...</p>
+              ) : (
+                <div className="aspect-square bg-black rounded-xl overflow-hidden relative">
+                  <QrScanner
+                    ref={scannerRef}
+                    delay={500}
+                    onError={handleCameraError}
+                    onScan={handleScan}
+                    constraints={scannerConstraints}
+                    style={{ 
+                      width: "100%", 
+                      height: "100%",
+                      objectFit: "cover"
+                    }}
+                  />
+                  
+                  {/* Scanner Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-64 h-64 border-2 border-white border-dashed rounded-lg relative">
+                      <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-white"></div>
+                      <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-white"></div>
+                      <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-white"></div>
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-white"></div>
                     </div>
                   </div>
-                )}
-              </div>
+
+                  {/* Processing Overlay */}
+                  {isProcessing && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-xl">
+                      <div className="text-white text-center">
+                        <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                        <p className="font-semibold">Processing...</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Manual Input */}
@@ -260,7 +395,7 @@ export default function VerifyQRPage() {
             </div>
           </div>
 
-          {/* Results Section */}
+           {/* Results Section */}
           <div className="space-y-6">
             {/* Status Card */}
             <div className={`bg-white rounded-2xl shadow-xl p-6 border-2 ${getStatusColor()}`}>
