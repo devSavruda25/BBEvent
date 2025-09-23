@@ -61,10 +61,10 @@ export default function Home() {
 
     {/* Title */}
     <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
-      <span className="bg-gradient-to-r from-primary via-accent to-cyan-400 bg-clip-text text-transparent block">
+      <span className="bg-gradient-to-r from-orange-400 via-yellow-300 to-red-500 bg-clip-text text-transparent">
         PICKLE X COFFEE
       </span>
-      <span className="bg-gradient-to-r from-primary via-accent to-cyan-400 bg-clip-text text-transparent block">
+      <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent block">
         RAVE X LAUNCH BB EXPRESS
       </span>
       <span className="block mt-4 text-foreground">Fitness & Lifestyle</span>
