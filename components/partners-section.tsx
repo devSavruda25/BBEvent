@@ -27,7 +27,7 @@ const partners = [
   },
   {
     category: "Brand Partners",
-    items: ["Decathlon", "Brotein Bistro", "Sports Equipment Brands"],
+    items: [, "Brotein Bistro", "Sports Equipment Brands"],
   },
 ]
 

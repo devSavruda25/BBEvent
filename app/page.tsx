@@ -9,7 +9,8 @@ import { RegistrationForm } from "@/components/registration-form"
 import { EventHighlights } from "@/components/event-highlights"
 import { EventSchedule } from "@/components/event-schedule"
 import { PartnersSection } from "@/components/partners-section"
-import { Instagram, Facebook, Twitter } from "lucide-react"
+import { Instagram, Facebook, Twitter } from "lucide-react" 
+import FeaturedGuests from "@/components/FeaturedGuests"
 import Image from "next/image"
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
@@ -151,6 +152,7 @@ export default function Home() {
 
       {/* Partners Section */}
       <PartnersSection />
+      <FeaturedGuests />
 
       {/* Why This Event Matters */}
       <section className="py-20 px-4 bg-card/50">
