@@ -60,8 +60,8 @@ export function RegistrationForm() {
 
       console.log("Submitting payload:", payload)
 
-      const res = await fetch("https://bbe-cpv1.onrender.com/api/register", {
-        // const res = await fetch("https://13.201.117.245/api/register", {
+      const res = await fetch("https://bbeventbackend.onrender.com/api/register", {
+        
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
